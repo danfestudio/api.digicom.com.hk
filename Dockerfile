@@ -17,5 +17,8 @@ RUN npm install
 # Copy the rest of your application files
 COPY . .
 
+# Document that the app listens on port 8888
+EXPOSE 8888
+
 # Start the application
 CMD ["npm", "start"]
