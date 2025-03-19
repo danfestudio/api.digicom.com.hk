@@ -29,9 +29,7 @@ WORKDIR /app
 COPY --from=build /app/package.json /app/package.json
 RUN npm install --only=production
 
-# Copy the built files from the previous stage
-COPY --from=build /app/.next /app/.next
-COPY --from=build /app/public /app/public
+COPY . .
 
 # Set environment to production
 ENV NODE_ENV=production
@@ -40,4 +38,4 @@ ENV NODE_ENV=production
 EXPOSE 8888
 
 # Start the Next.js app
-CMD ["npm", "run", "start"]
+CMD ["node", "app.js"]
