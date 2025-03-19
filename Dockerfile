@@ -1,41 +1,24 @@
-# Use Node.js as the base image
-FROM node:18-alpine AS build
+# Use the official Alpine Linux base image
+FROM alpine:latest
 
-# Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json first to leverage caching
-COPY package*.json ./
+# Update package index and install Node.js and npm
+RUN apk update && apk add --no-cache nodejs npm
 
-# Install dependencies
-RUN npm install
+# Copy package.json (and package-lock.json if it exists) to the working directory
+COPY package.json ./
+COPY package-lock.json* ./
 
-# Copy the rest of the application files
+# Install only production dependencies
+RUN npm install --production
+
+# Copy the rest of your application files
 COPY . .
 
-# Ensure caniuse-lite is up to date
-RUN npx update-browserslist-db@latest
-
-# Build the application
-RUN npm run build
-
-# Use a minimal Node.js environment to serve the application
-FROM node:18-alpine
-
-# Set working directory
-WORKDIR /app
-
-# Install production dependencies only
-COPY --from=build /app/package.json /app/package.json
-RUN npm install --only=production
-
-COPY . .
-
-# Set environment to production
-ENV NODE_ENV=production
-
-# Expose port 8888
+# Document that the app listens on port 8888
 EXPOSE 8888
 
-# Start the Next.js app
+# Start the application directly with Node
 CMD ["node", "app.js"]

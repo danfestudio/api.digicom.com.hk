@@ -53,23 +53,24 @@ const startServer = async () => {
     app.use(
       cors({
         origin: function (origin, callback) {
-          // Allow requests with no origin (e.g., from Postman)
-          if (!origin) return callback(null, true);
-
-          // Check if the origin is allowed
-          if (allowedOrigins.includes(origin)) {
+          const allowedOrigins = [
+            'http://94.136.185.141:3000', // Frontend
+            'http://94.136.185.141:8888', // Backend (if called directly)
+            'http://api.digicom.com.hk',
+            'http://digicom.com.hk'         
+            
+          ].concat(process.env.URL ? process.env.URL.split(",") : []);
+    
+          if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
           } else {
-            
-            // ------------------------- FIX THIS CROSS ORIGIN PROBLEM -----------------------------
-
-            //callback(new Error("Not allowed by CORS"));
-            callback(null, true)
+            callback(new Error("Not allowed by CORS"));
           }
         },
-        credentials: true, // Allow cookies and credentials
+        credentials: true
       })
     );
+
     console.log("CORS setup complete.");
 
     console.log("Setting up JSON middleware...");
