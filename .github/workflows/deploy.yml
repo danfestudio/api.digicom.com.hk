@@ -20,8 +20,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          port: 22
+          key: ${{ secrets.PRIVATE_KEY }}        
 
           script: |
             cd /home/cb/projects/danfestudio/api.digicom.com.hk || exit 1            
