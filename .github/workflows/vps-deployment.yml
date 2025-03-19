@@ -1,0 +1,31 @@
+name: Deploy on VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Connect to VPS and deploy
+      - name: SSH into VPS and deploy
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
+
+          script: |
+            cd /home/cb/projects/danfestudio/api.digicom.com.hk || exit 1            
+            docker build -t digicomapi .
+            docker stop digicomapi || true
+            docker rm digicomapi || true
+            docker run -d --name api.digicom.com.hk -p 8888:8888 digicomapi
